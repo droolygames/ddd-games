@@ -188,6 +188,7 @@ export function createGame(options = {}) {
       skills: SKILLS,
       marks,
       bankSize: state.bankSize,
+      perSkill,
     };
   }
 

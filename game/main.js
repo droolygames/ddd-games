@@ -9,6 +9,9 @@
  */
 
 import { createGame } from "./engine.js";
+import { CHALLENGE_COUNT } from "./challenges.js";
+
+const LIVE_URL = "https://x.com/i/broadcasts/1kJzDDYeYWNKv";
 
 const game = createGame();
 const root = document.getElementById("game-root");
@@ -25,33 +28,45 @@ function render(snap) {
 
   if (snap.phase === "title") {
     root.appendChild(viewTitle(snap));
-    return;
-  }
-  if (snap.phase === "playing") {
+  } else if (snap.phase === "playing") {
     root.appendChild(viewPlaying(snap));
-    return;
-  }
-  if (snap.phase === "result") {
+  } else if (snap.phase === "result") {
     root.appendChild(viewResult(snap));
   }
+
+  // Focus management: land on the phase heading for SR / keyboard
+  requestAnimationFrame(() => {
+    const focusTarget =
+      root.querySelector("#game-title, #ch-title, #verdict-title") ||
+      root.querySelector("input, button, a");
+    if (focusTarget && typeof focusTarget.focus === "function") {
+      try {
+        focusTarget.focus({ preventScroll: true });
+      } catch {
+        focusTarget.focus();
+      }
+    }
+  });
 }
 
 function viewTitle(snap) {
+  const bank = CHALLENGE_COUNT || snap.progress?.total || "—";
   const el = elFrom(`
     <section class="panel title-panel epic" aria-labelledby="game-title">
       <div class="ticket-frame" aria-hidden="true">
         <span class="ticket-notch"></span>
         <span class="ticket-foil">GOLDEN DROOL · $DDD</span>
       </div>
-      <p class="eyebrow">$DDD Games · DROOLY.AI studio arena</p>
-      <h1 id="game-title" class="title">Charlie's factory.<br><span class="serif gold">Hunger Games stakes.</span></h1>
+      <p class="eyebrow">$DDD Games · Drooly Games · ICEFAM.FM EP.2</p>
+      <h1 id="game-title" class="title" tabindex="-1">Charlie's factory.<br><span class="serif gold">Hunger Games stakes.</span></h1>
       <p class="tagline" role="note">May the odds be ever in your <em>flavor</em>.</p>
       <div class="prize-box">
-        <p class="prize-label">Economy · $DDD</p>
-        <p class="prize-main"><strong>$DDD</strong> powers the game — real crypto and in-game currency when minted.</p>
-        <p class="prize-sub"><strong>10 Golden Drool Tickets</strong> = livestreamed showdown seats. Skill trials: Code · Canvas · Heart. Studio: <strong>drooly.ai</strong>.</p>
+        <p class="prize-label">Live · virtual Hunger Games</p>
+        <p class="prize-main"><strong>$DDD</strong> — skill arena from <strong>Drooly Games</strong> / <strong>DROOLY.AI</strong>. Real crypto + in-game currency when minted.</p>
+        <p class="prize-sub"><strong>10 Golden Drool Tickets</strong> = livestreamed showdown seats. Train Code · Canvas · Heart. Watch: <a href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">ICEFAM.FM EP.2 on X ↗</a></p>
       </div>
       <p class="lede">Train the three skills. Ticket holders are the <strong>Ten Tributes</strong>. Everyone else can spar in the arena.</p>
+      <p class="bank-meta" aria-label="Challenge bank size"><span class="bank-count">${bank}</span> sealed trials · interleaved Code / Canvas / Heart · no eval</p>
       <ul class="skill-pills" role="list">
         <li class="pill code"><span>01</span> Code — Null Protocol</li>
         <li class="pill canvas"><span>02</span> Canvas — creativity</li>
@@ -66,7 +81,7 @@ function viewTitle(snap) {
         <button type="submit" class="btn primary epic-cta">Enter the factory</button>
       </form>
       ${boardHtml(snap.leaderboard)}
-      <p class="nav-back"><a href="/#golden-drool">← Golden Drool on drooly.ai</a></p>
+      <p class="nav-back"><a href="/#golden-drool">← Golden Drool on drooly.ai</a> · <a href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">Live broadcast ↗</a></p>
     </section>
   `);
 
@@ -82,21 +97,22 @@ function viewPlaying(snap) {
   const ch = snap.challenge;
   const p = snap.progress;
   const skill = ch.skillMeta;
+  const pct = p.total ? Math.round((p.index / p.total) * 100) : 0;
 
   const el = elFrom(`
-    <section class="panel play-panel" aria-labelledby="ch-title">
+    <section class="panel play-panel" aria-labelledby="ch-title" data-skill="${escapeHtml(ch.skill)}">
       <header class="play-head">
-        <div class="progress-wrap" aria-label="Progress">
-          <div class="progress-bar" style="width:${((p.index) / p.total) * 100}%"></div>
+        <div class="progress-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="${p.total}" aria-valuenow="${p.index}" aria-label="Trial progress">
+          <div class="progress-bar" style="width:${pct}%"></div>
         </div>
         <p class="meta">
           <span class="skill-badge skill-${ch.skill}">${escapeHtml(skill.name)}</span>
-          <span>${p.index + 1} / ${p.total}</span>
-          <span class="muted">${escapeHtml(snap.tributeName)}</span>
+          <span class="progress-count">${p.index + 1} / ${p.total}</span>
+          <span class="muted tribute-chip">${escapeHtml(snap.tributeName)}</span>
         </p>
         <p class="arena">${escapeHtml(skill.arena)} · ${escapeHtml(skill.tagline)}</p>
         <p class="tagline-mini">May the odds be ever in your flavor.</p>
-        <h2 id="ch-title" class="ch-title">${escapeHtml(ch.title)}</h2>
+        <h2 id="ch-title" class="ch-title" tabindex="-1">${escapeHtml(ch.title)}</h2>
       </header>
       <div class="prompt">${formatPrompt(ch.prompt)}</div>
       <div class="options" id="options" role="group" aria-label="Answers"></div>
@@ -128,12 +144,16 @@ function viewPlaying(snap) {
       const pos = snap.orderDraft.indexOf(opt.id);
       if (pos >= 0) {
         btn.classList.add("selected");
+        btn.setAttribute("aria-pressed", "true");
         btn.innerHTML = `<span class="ord">${pos + 1}</span><span class="opt-label">${escapeHtml(opt.label)}</span>`;
       } else {
+        btn.setAttribute("aria-pressed", "false");
         btn.innerHTML = `<span class="ord dim">·</span><span class="opt-label">${escapeHtml(opt.label)}</span>`;
       }
     } else {
-      if (snap.selected === opt.id) btn.classList.add("selected");
+      const on = snap.selected === opt.id;
+      if (on) btn.classList.add("selected");
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
       btn.innerHTML = `<span class="opt-label">${escapeHtml(opt.label)}</span>`;
     }
 
@@ -154,6 +174,24 @@ function viewPlaying(snap) {
     clear.addEventListener("click", () => render(game.clearOrder()));
   }
 
+  // Keyboard: 1–4 select options; Enter advances when ready
+  el.addEventListener("keydown", (e) => {
+    const n = Number(e.key);
+    if (n >= 1 && n <= 9) {
+      const opts = [...optionsRoot.querySelectorAll("button.option")];
+      const target = opts[n - 1];
+      if (target) {
+        e.preventDefault();
+        target.click();
+      }
+    } else if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+      if (game.snapshot().canAdvance) {
+        e.preventDefault();
+        next.click();
+      }
+    }
+  });
+
   return el;
 }
 
@@ -161,6 +199,11 @@ function viewResult(snap) {
   const v = snap.verdict;
   const r = snap.result;
   const skills = ["code", "canvas", "heart"];
+  const ms = snap.leaderboard?.[0]?.ms;
+  const elapsed =
+    typeof ms === "number"
+      ? ""
+      : "";
 
   const meters = skills
     .map((s) => {
@@ -168,7 +211,7 @@ function viewResult(snap) {
       const meta = snap.skills[s];
       const sharp = v.sharp[s] ? "sharp" : "soft";
       return `
-        <div class="meter ${sharp}">
+        <div class="meter ${sharp}" style="--fill:${sc.percent}%">
           <div class="meter-head">
             <span>${escapeHtml(meta.name)}</span>
             <strong>${sc.percent}%</strong>
@@ -189,11 +232,15 @@ function viewResult(snap) {
     )
     .join("");
 
+  const shareText = encodeURIComponent(
+    `I scored ${r.overallPercent}% on $DDD Games (${v.rank}) — Code/Canvas/Heart. May the odds be ever in your flavor. ${LIVE_URL}`
+  );
+
   const el = elFrom(`
     <section class="panel result-panel epic rank-${escapeHtml(v.rank.toLowerCase())}" aria-labelledby="verdict-title">
       <p class="tagline result-tag">May the odds be ever in your flavor.</p>
       <p class="eyebrow">Trial complete · overall ${r.overallPercent}% · path to livestream showdown</p>
-      <h2 id="verdict-title" class="verdict-title">${escapeHtml(v.title)}</h2>
+      <h2 id="verdict-title" class="verdict-title" tabindex="-1">${escapeHtml(v.title)}</h2>
       <p class="rank-pill">${escapeHtml(v.rank)}</p>
       <p class="lede">${escapeHtml(v.blurb)}</p>
       <div class="prize-box compact">
@@ -206,9 +253,12 @@ function viewResult(snap) {
       ${boardHtml(snap.leaderboard)}
       <div class="result-actions">
         <button type="button" class="btn primary" id="retry">Run it back</button>
+        <a class="btn ghost" href="https://x.com/intent/tweet?text=${shareText}" target="_blank" rel="noopener noreferrer">Share on X</a>
+        <a class="btn ghost" href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">Watch live ↗</a>
         <a class="btn ghost" href="/#golden-drool">Golden Drool</a>
         <a class="btn ghost" href="/chat">drooly.ai chat</a>
       </div>
+      <p class="fine result-fine">${elapsed}Sealed bank · local board only · dual-license OSS on droolygames/ddd-games</p>
     </section>
   `);
 

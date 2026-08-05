@@ -203,13 +203,12 @@ export function createGame(options = {}) {
   };
 }
 
+/** Preserve within-skill order (difficulty curve from pickRunChallenges). */
 function interleaveBySkill(list) {
   const buckets = { code: [], canvas: [], heart: [] };
   for (const c of list) {
     if (buckets[c.skill]) buckets[c.skill].push(c);
   }
-  // shuffle within skill for replay value
-  for (const k of Object.keys(buckets)) shuffleInPlace(buckets[k]);
   const out = [];
   const max = Math.max(buckets.code.length, buckets.canvas.length, buckets.heart.length);
   for (let i = 0; i < max; i++) {
@@ -218,12 +217,4 @@ function interleaveBySkill(list) {
     if (buckets.heart[i]) out.push(buckets.heart[i]);
   }
   return out;
-}
-
-function shuffleInPlace(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
 }

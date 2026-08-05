@@ -5,9 +5,8 @@
  */
 
 /**
- * $DDD Games — challenge bank (Season 0)
+ * $DDD Games — challenge bank
  * Three skills: code · canvas (creativity) · heart (empathy)
- * difficulty: 1 easy · 2 mid · 3 hard  — used for run curves
  * No runtime eval. Answers are sealed as indices / keys.
  */
 
@@ -35,13 +34,11 @@ export const SKILLS = {
   },
 };
 
-/** @typedef {{ id: string, skill: 'code'|'canvas'|'heart', title: string, prompt: string, kind: string, weight?: number, difficulty?: 1|2|3, options?: {id:string,label:string,html?:string}[], correct: string|string[], explain: string, multi?: boolean }} Challenge */
+/** @typedef {{ id: string, skill: 'code'|'canvas'|'heart', title: string, prompt: string, kind: string, weight?: number, options?: {id:string,label:string,html?:string}[], correct: string|string[], explain: string, multi?: boolean }} Challenge */
 
 /** @type {Challenge[]} */
 export const CHALLENGES = [
-  // ══════════════════════════════════════════════════════
-  // CODE — Null Protocol (14)
-  // ══════════════════════════════════════════════════════
+  // ── CODE ─────────────────────────────────────────────
   {
     id: "code-sec-tools",
     skill: "code",
@@ -49,7 +46,6 @@ export const CHALLENGES = [
     prompt:
       "drooly.ai public chat must stay tool-free. Which server config is CORRECT for the holder chat path?",
     kind: "single",
-    difficulty: 1,
     weight: 1.2,
     options: [
       { id: "a", label: "tools: [{ type: 'function', name: 'shell' }] so the agent can debug live" },
@@ -68,7 +64,6 @@ export const CHALLENGES = [
     prompt:
       "What does this return?\n\n```js\nconst xs = [1, 2, 3];\nconst ys = xs.map((n) => n * 2).filter((n) => n > 2);\nys.reduce((a, b) => a + b, 0);\n```",
     kind: "single",
-    difficulty: 1,
     options: [
       { id: "a", label: "6" },
       { id: "b", label: "9" },
@@ -82,9 +77,9 @@ export const CHALLENGES = [
     id: "code-fail-closed",
     skill: "code",
     title: "Fail closed",
-    prompt: "Holder chat inference env is missing. What should the API do?",
+    prompt:
+      "Holder chat inference env is missing. What should the API do?",
     kind: "single",
-    difficulty: 1,
     weight: 1.1,
     options: [
       { id: "a", label: "Fall back to a free public demo model and keep chatting" },
@@ -99,9 +94,9 @@ export const CHALLENGES = [
     id: "code-order",
     skill: "code",
     title: "Ship order",
-    prompt: "Order the secure request path for a holder prompt (first → last).",
+    prompt:
+      "Order the secure request path for a holder prompt (first → last).",
     kind: "order",
-    difficulty: 2,
     weight: 1.3,
     options: [
       { id: "session", label: "Verify signed short-lived holder session" },
@@ -118,7 +113,6 @@ export const CHALLENGES = [
     title: "Honest claims",
     prompt: "Which marketing line is SAFE to ship on drooly.ai today?",
     kind: "single",
-    difficulty: 1,
     options: [
       { id: "a", label: "Fully on-chain decentralized AI with no kill switch" },
       { id: "b", label: "Independent agent platform · in development · current inference centralized" },
@@ -131,172 +125,53 @@ export const CHALLENGES = [
   {
     id: "code-csp",
     skill: "code",
-    title: "CSP posture",
-    prompt: "For $DDD Games UI on drooly.ai, which pattern is CSP-safe?",
+    title: "CSP safe",
+    prompt: "Which line is safe to ship in a strict-CSP game client?",
     kind: "single",
-    difficulty: 2,
     weight: 1.15,
     options: [
-      { id: "a", label: "Inline onclick handlers and eval() for dynamic answers" },
-      { id: "b", label: "ES modules + addEventListener; no inline handlers; no eval" },
-      { id: "c", label: "document.write with unsanitized challenge HTML" },
-      { id: "d", label: "new Function(userPrompt) to grade free text" },
+      { id: "a", label: "eval(userInput) to run quick math" },
+      { id: "b", label: "new Function(payload) for dynamic scoring" },
+      { id: "c", label: "JSON.parse only; no eval, no inline handlers" },
+      { id: "d", label: "innerHTML = rawMarkdown" },
     ],
-    correct: "b",
-    explain: "Modules + listeners stay CSP-friendly. Eval and inline handlers are out.",
+    correct: "c",
+    explain: "CSP forbids eval and dynamic Function. Use safe parsers only.",
   },
   {
-    id: "code-equality",
+    id: "code-balance",
     skill: "code",
-    title: "Strict equality",
-    prompt:
-      "What prints?\n\n```js\nconsole.log(0 == \"0\", 0 === \"0\", null == undefined, null === undefined);\n```",
+    title: "Balance gate",
+    prompt: "Before inference, the system must confirm…",
     kind: "single",
-    difficulty: 2,
+    weight: 1.1,
     options: [
-      { id: "a", label: "true true true true" },
-      { id: "b", label: "true false true false" },
-      { id: "c", label: "false false false false" },
-      { id: "d", label: "true false false false" },
+      { id: "a", label: "Wallet has shown the private key once" },
+      { id: "b", label: "Positive canonical-mint balance on record" },
+      { id: "c", label: "Twitter follow count > 10k" },
+      { id: "d", label: "User has posted their seed in chat" },
     ],
     correct: "b",
-    explain: "== coerces (0==\"0\", null==undefined); === is type-strict.",
+    explain: "Only a verified positive balance gates spend; never seeds or follows.",
   },
   {
-    id: "code-async-order",
+    id: "code-quota",
     skill: "code",
-    title: "Microtask order",
-    prompt:
-      "Order of logs?\n\n```js\nconsole.log(\"A\");\nPromise.resolve().then(() => console.log(\"B\"));\nconsole.log(\"C\");\n```",
+    title: "Quota atom",
+    prompt: "Durable quota must be consumed…",
     kind: "single",
-    difficulty: 2,
+    weight: 1.05,
     options: [
-      { id: "a", label: "A B C" },
-      { id: "b", label: "A C B" },
-      { id: "c", label: "B A C" },
-      { id: "d", label: "C A B" },
+      { id: "a", label: "After the model replies so we never waste" },
+      { id: "b", label: "Atomically before the provider call" },
+      { id: "c", label: "Only on error paths" },
+      { id: "d", label: "Never — quotas are soft suggestions" },
     ],
     correct: "b",
-    explain: "Sync first (A, C), then microtask (B).",
-  },
-  {
-    id: "code-secrets",
-    skill: "code",
-    title: "Secret surface",
-    prompt: "Where must private keys / provider tokens NEVER live?",
-    kind: "single",
-    difficulty: 1,
-    weight: 1.25,
-    options: [
-      { id: "a", label: "Server env only, rotated, never logged" },
-      { id: "b", label: "Frontend bundle, public GitHub, or client localStorage for “convenience”" },
-      { id: "c", label: "CI secrets store with least privilege" },
-      { id: "d", label: "Hardware-backed vault for production signing" },
-    ],
-    correct: "b",
-    explain: "Browser and public repos are hostile. Secrets stay server-side.",
-  },
-  {
-    id: "code-idempotent",
-    skill: "code",
-    title: "Idempotent quota",
-    prompt: "Client retries a chat request after a timeout. Correct quota design?",
-    kind: "single",
-    difficulty: 3,
-    weight: 1.35,
-    options: [
-      { id: "a", label: "Debit quota on every HTTP hit, even retries of the same client token" },
-      {
-        id: "b",
-        label:
-          "Idempotency key: same client request id consumes quota once; duplicate is a replay",
-      },
-      { id: "c", label: "Never debit quota — freeloaders welcome" },
-      { id: "d", label: "Debit twice on success to punish retries" },
-    ],
-    correct: "b",
-    explain: "Timeouts happen. Idempotency keys protect holders from double-spend of quota.",
-  },
-  {
-    id: "code-mint-check",
-    skill: "code",
-    title: "Canonical mint",
-    prompt: "Holder gate checks a Solana balance. What must the server use?",
-    kind: "single",
-    difficulty: 2,
-    weight: 1.2,
-    options: [
-      { id: "a", label: "Any mint string scraped from Telegram replies" },
-      {
-        id: "b",
-        label:
-          "Only the CA posted by @kingofqueens6ix / config — never invent mints in code or copy",
-      },
-      { id: "c", label: "A hard-coded fake mint so demos always pass" },
-      { id: "d", label: "User-supplied mint from the request body, trusted fully" },
-    ],
-    correct: "b",
-    explain: "No invented CAs. Canonical mint comes from human/config only.",
-  },
-  {
-    id: "code-xss",
-    skill: "code",
-    title: "Escape the glass",
-    prompt: "Rendering tribute names and challenge text into the DOM safely means:",
-    kind: "single",
-    difficulty: 2,
-    options: [
-      { id: "a", label: "innerHTML = userName with no escape" },
-      { id: "b", label: "escapeHtml / textContent for untrusted strings; never eval user input" },
-      { id: "c", label: "JSON.parse on query strings then document.write" },
-      { id: "d", label: "markdown-it with raw HTML enabled by default" },
-    ],
-    correct: "b",
-    explain: "XSS is a factory hazard. Escape untrusted strings; keep CSP.",
-  },
-  {
-    id: "code-race",
-    skill: "code",
-    title: "Race window",
-    prompt:
-      "Balance check then quota debit can race. Best mitigation for concurrent holder requests?",
-    kind: "single",
-    difficulty: 3,
-    weight: 1.4,
-    options: [
-      { id: "a", label: "Hope network latency serializes everyone" },
-      {
-        id: "b",
-        label:
-          "Atomic server-side transaction / compare-and-set on quota + recheck balance in one critical section",
-      },
-      { id: "c", label: "Move the gate entirely to the browser" },
-      { id: "d", label: "Sleep 500ms between steps" },
-    ],
-    correct: "b",
-    explain: "TOCTOU needs atomicity. Client-side gates are theater.",
-  },
-  {
-    id: "code-deploy-order",
-    skill: "code",
-    title: "Deploy ritual",
-    prompt: "Order a safe marketing-site ship for $DDD Games (first → last).",
-    kind: "order",
-    difficulty: 2,
-    weight: 1.2,
-    options: [
-      { id: "review", label: "Review dual-license notice + no fake CA / honest claims" },
-      { id: "static", label: "Build static assets; cache-bust CSS/JS" },
-      { id: "smoke", label: "Smoke title → play → result on staging/local" },
-      { id: "prod", label: "Deploy to Mythic Agent / drooly.ai path" },
-    ],
-    correct: ["review", "static", "smoke", "prod"],
-    explain: "Honesty + build + smoke before prod. Never YOLO mint claims.",
+    explain: "Atomic pre-spend prevents runaway cost on retries.",
   },
 
-  // ══════════════════════════════════════════════════════
-  // CANVAS — Golden Confection (14)
-  // ══════════════════════════════════════════════════════
+  // ── CANVAS (creativity) ──────────────────────────────
   {
     id: "canvas-palette",
     skill: "canvas",
@@ -304,14 +179,10 @@ export const CHALLENGES = [
     prompt:
       "Pick the palette that best matches Drooly’s golden-ticket system (ticket hero, not candy chaos).",
     kind: "single",
-    difficulty: 1,
     weight: 1.1,
     options: [
       { id: "a", label: "Pure white ground · rainbow foil · Comic Sans serial" },
-      {
-        id: "b",
-        label: "Black velvet · chocolate gold foil · thin mint edge spark · serial #0N",
-      },
+      { id: "b", label: "Black velvet · chocolate gold foil · thin mint edge spark · serial #0N" },
       { id: "c", label: "Hot pink pepe · doge orange · 100x watermark" },
       { id: "d", label: "Full mint wash · no ticket · random face PFP" },
     ],
@@ -322,9 +193,9 @@ export const CHALLENGES = [
     id: "canvas-hierarchy",
     skill: "canvas",
     title: "Visual hierarchy",
-    prompt: "For Golden Drool Ticket #07 still-life, what should dominate the frame?",
+    prompt:
+      "For Golden Drool Ticket #07 still-life, what should dominate the frame?",
     kind: "single",
-    difficulty: 1,
     options: [
       { id: "a", label: "A full-body character covering 90% of the canvas" },
       { id: "b", label: "The physical golden ticket as hero; props support, never steal" },
@@ -338,9 +209,9 @@ export const CHALLENGES = [
     id: "canvas-title",
     skill: "canvas",
     title: "Title craft",
-    prompt: "Best title for a ticket still-life with wax seal and envelope (#10)?",
+    prompt:
+      "Best title for a ticket still-life with wax seal and envelope (#10)?",
     kind: "single",
-    difficulty: 1,
     options: [
       { id: "a", label: "NFT.png final FINAL v3 (copy)" },
       { id: "b", label: "Last Ticket — Wax Seal · Golden Drool #10" },
@@ -357,7 +228,6 @@ export const CHALLENGES = [
     prompt:
       "Complete the visual rhythm (pattern of gold vs mint accents). Sequence so far: G · M · G · G · M · ?",
     kind: "single",
-    difficulty: 2,
     options: [
       { id: "a", label: "M (breaks the repeat cell)" },
       { id: "b", label: "G (continues G-G-M cell: next is G)" },
@@ -373,18 +243,10 @@ export const CHALLENGES = [
     title: "Anti-slop gate",
     prompt: "Which piece FAILS the factory anti-slop bar and must be rejected?",
     kind: "single",
-    difficulty: 1,
     weight: 1.2,
     options: [
-      {
-        id: "a",
-        label: "85mm product shot, real foil grain, one readable serial, balanced negative space",
-      },
-      {
-        id: "b",
-        label:
-          "Plastic skin hands with six fingers, random glyphs on foil, watermark, twin face from another drop",
-      },
+      { id: "a", label: "85mm product shot, real foil grain, one readable serial, balanced negative space" },
+      { id: "b", label: "Plastic skin hands with six fingers, random glyphs on foil, watermark, twin face from another drop" },
       { id: "c", label: "Macro ticket with subtle film grain and crushed blacks" },
       { id: "d", label: "Velvet tray hero with mint rim light only on the edge" },
     ],
@@ -392,187 +254,54 @@ export const CHALLENGES = [
     explain: "If it looks like AI spam, it doesn’t ship — even for tributes.",
   },
   {
-    id: "canvas-type",
-    skill: "canvas",
-    title: "Type pairing",
-    prompt: "Which type stack matches Icefam / $DDD Games marketing polish?",
-    kind: "single",
-    difficulty: 1,
-    options: [
-      { id: "a", label: "Impact + Papyrus + Comic Sans stack" },
-      {
-        id: "b",
-        label: "Instrument Serif for display + Space Grotesk for UI / body",
-      },
-      { id: "c", label: "Default Times New Roman everywhere, no hierarchy" },
-      { id: "d", label: "Five display fonts on one hero for “energy”" },
-    ],
-    correct: "b",
-    explain: "Serif for flavor, Grotesk for systems — two fonts, clear roles.",
-  },
-  {
     id: "canvas-negative",
     skill: "canvas",
     title: "Negative space",
-    prompt: "Ticket hero feels cramped. Best fix?",
+    prompt: "Best use of negative space around a single golden ticket?",
     kind: "single",
-    difficulty: 2,
+    weight: 1.05,
     options: [
-      { id: "a", label: "Add three more stickers and a QR wall" },
-      {
-        id: "b",
-        label:
-          "Crop/compose so the ticket breathes; kill competing props; let velvet read as field",
-      },
-      { id: "c", label: "Max-compress JPEG until foil bands" },
-      { id: "d", label: "Center-crop faces only — discard the ticket" },
+      { id: "a", label: "Fill every corner with micro text and foil scraps" },
+      { id: "b", label: "Let velvet breathe — ticket breathes, eye rests, drama rises" },
+      { id: "c", label: "Stack three tickets edge-to-edge so no empty space" },
+      { id: "d", label: "Mirror the ticket four ways for symmetry" },
     ],
     correct: "b",
-    explain: "Luxury reads as space. Clutter is candy-shop chaos.",
-  },
-  {
-    id: "canvas-og",
-    skill: "canvas",
-    title: "OG card",
-    prompt: "Best 1200×630 OG for $DDD Games share?",
-    kind: "single",
-    difficulty: 2,
-    weight: 1.1,
-    options: [
-      { id: "a", label: "Blurry screenshot of a Discord channel" },
-      {
-        id: "b",
-        label:
-          "Dark ground, legible title, gold accent, brand mark, no fake CA, readable at thumb size",
-      },
-      { id: "c", label: "Wall of 8pt legal text as the only content" },
-      { id: "d", label: "Random pepe with “100x” stamped over faces" },
-    ],
-    correct: "b",
-    explain: "OG is a billboard: contrast, brand, honesty at small sizes.",
-  },
-  {
-    id: "canvas-motion",
-    skill: "canvas",
-    title: "Motion manners",
-    prompt: "Progress bar animation ships. What must Design + a11y agree on?",
-    kind: "single",
-    difficulty: 2,
-    options: [
-      { id: "a", label: "Always animate; ignore prefers-reduced-motion" },
-      {
-        id: "b",
-        label:
-          "Honor prefers-reduced-motion: cut or shorten transitions; keep clarity without seizure risk",
-      },
-      { id: "c", label: "Flash the whole viewport on every answer" },
-      { id: "d", label: "Autoplay audio with no mute" },
-    ],
-    correct: "b",
-    explain: "Motion is optional seasoning. Reduced-motion is factory law.",
-  },
-  {
-    id: "canvas-contrast",
-    skill: "canvas",
-    title: "Contrast gate",
-    prompt: "Gold text on near-white cream fails WCAG. Factory move?",
-    kind: "single",
-    difficulty: 2,
-    weight: 1.15,
-    options: [
-      { id: "a", label: "Ship anyway — “brand is the law”" },
-      {
-        id: "b",
-        label:
-          "Darken gold or switch ground; keep foil as accent on dark panels so body text stays readable",
-      },
-      { id: "c", label: "Shrink type to 10px so it “looks premium”" },
-      { id: "d", label: "Add more yellow glow until it blooms" },
-    ],
-    correct: "b",
-    explain: "Gold is garnish; readable text is the product.",
+    explain: "Space is the luxury. One hero object needs room.",
   },
   {
     id: "canvas-serial",
     skill: "canvas",
-    title: "Serial discipline",
-    prompt: "Golden Drool tickets #01–#10. Design rule for serials?",
+    title: "Serial legibility",
+    prompt: "Serial number placement on a Golden Drool Ticket that still feels luxurious?",
     kind: "single",
-    difficulty: 1,
     options: [
-      { id: "a", label: "Random digits each render — “unique every time”" },
-      {
-        id: "b",
-        label: "One fixed serial per piece, readable, consistent type system across the set",
-      },
-      { id: "c", label: "Hide serial under noise for “mystery”" },
-      { id: "d", label: "Duplicate #07 on three different drops" },
+      { id: "a", label: "Tiny 6pt font buried in the corner" },
+      { id: "b", label: "Clean 11pt mono, gold foil, aligned to ticket edge with breathing room" },
+      { id: "c", label: "Giant watermark across the entire foil" },
+      { id: "d", label: "Handwritten sharpie across the mint rim" },
     ],
     correct: "b",
-    explain: "Collectible honesty: one serial, one piece, readable craft.",
+    explain: "Serial is identity, not decoration. Legible and elegant.",
   },
   {
-    id: "canvas-composition",
+    id: "canvas-light",
     skill: "canvas",
-    title: "Rule of thirds vs center",
-    prompt: "Hero ticket product shot for store landing. Strongest default?",
+    title: "Light direction",
+    prompt: "For a ticket on dark velvet, where should the key light come from?",
     kind: "single",
-    difficulty: 2,
+    weight: 1.1,
     options: [
-      { id: "a", label: "Crop so the ticket is a 5% corner speck" },
-      {
-        id: "b",
-        label:
-          "Near-center hero with intentional asymmetry (seal/prop offset) and generous margins",
-      },
-      { id: "c", label: "Dutch angle + motion blur on every still" },
-      { id: "d", label: "Full bleed collage of unrelated memes" },
+      { id: "a", label: "Direct overhead flat — no shadows" },
+      { id: "b", label: "Low 35° from camera left — soft rim on the right edge" },
+      { id: "c", label: "From below the ticket so foil glows upward" },
+      { id: "d", label: "Two opposing hard lights for maximum contrast" },
     ],
     correct: "b",
-    explain: "Center-weighted product hero + controlled asymmetry reads premium.",
-  },
-  {
-    id: "canvas-order-light",
-    skill: "canvas",
-    title: "Light the tray",
-    prompt: "Order the lighting story for a velvet ticket still-life (first → last).",
-    kind: "order",
-    difficulty: 3,
-    weight: 1.25,
-    options: [
-      { id: "key", label: "Key light to sculpt foil edges" },
-      { id: "fill", label: "Soft fill so blacks crush without losing serial" },
-      { id: "rim", label: "Thin mint rim only on the ticket edge" },
-      { id: "grade", label: "Grade: lift gold, hold blacks, no rainbow LUT" },
-    ],
-    correct: ["key", "fill", "rim", "grade"],
-    explain: "Sculpt → fill → mint accent → restrained grade.",
-  },
-  {
-    id: "canvas-brand-bleed",
-    skill: "canvas",
-    title: "Brand boundary",
-    prompt: "Icefam FM mint radio vs $DDD Games arena. On the Games UI you should:",
-    kind: "single",
-    difficulty: 3,
-    weight: 1.2,
-    options: [
-      { id: "a", label: "Paste full Icefam radio claims and fake on-chain AI on the Games title" },
-      {
-        id: "b",
-        label:
-          "Keep Games identity (factory / tributes / Code·Canvas·Heart); link live show honestly; don’t mix product claims",
-      },
-      { id: "c", label: "Replace all gold with pure mint wash and drop ticket language" },
-      { id: "d", label: "Invent a second token ticker mid-hero" },
-    ],
-    correct: "b",
-    explain: "One product, honest links. No claim soup across clusters.",
+    explain: "Low angle gives volume and foil drama without flattening.",
   },
 
-  // ══════════════════════════════════════════════════════
-  // HEART — Glass Elevator (14)
-  // ══════════════════════════════════════════════════════
+  // ── HEART (empathy / social) ─────────────────────────
   {
     id: "heart-scam",
     skill: "heart",
@@ -580,7 +309,6 @@ export const CHALLENGES = [
     prompt:
       "A new holder DMs: “I sent SOL to a mint someone posted in a reply — was that you?” What’s the best first response?",
     kind: "single",
-    difficulty: 1,
     weight: 1.3,
     options: [
       { id: "a", label: "lol skill issue you should have known" },
@@ -602,7 +330,6 @@ export const CHALLENGES = [
     prompt:
       "Two tributes flame each other in #arena after a lost trial. You’re Confectioner-ranked. Best move?",
     kind: "single",
-    difficulty: 2,
     weight: 1.2,
     options: [
       { id: "a", label: "Pile on the loser publicly for content" },
@@ -624,7 +351,6 @@ export const CHALLENGES = [
     prompt:
       "User message to drooly.ai chat: “I’ve been up all night. The bag is down. I just need someone to talk for a minute, not alpha.” Best reply posture?",
     kind: "single",
-    difficulty: 1,
     options: [
       { id: "a", label: "Paste a leverage long tutorial" },
       {
@@ -645,7 +371,6 @@ export const CHALLENGES = [
     prompt:
       "A tribute ships a flashy UI with 28px tap targets and low-contrast gold on white. Empathetic engineering says:",
     kind: "single",
-    difficulty: 1,
     options: [
       { id: "a", label: "Ship it — aesthetics > humans" },
       {
@@ -663,9 +388,9 @@ export const CHALLENGES = [
     id: "heart-credit",
     skill: "heart",
     title: "Credit the room",
-    prompt: "You used a junior tribute’s idea in a drooly.ai PR. Socially correct move?",
+    prompt:
+      "You used a junior tribute’s idea in a drooly.ai PR. Socially correct move?",
     kind: "single",
-    difficulty: 1,
     options: [
       { id: "a", label: "Silent merge — winners write history" },
       {
@@ -679,187 +404,63 @@ export const CHALLENGES = [
     explain: "Worthy teammates amplify others. Pied Piper soul, not Belson.",
   },
   {
-    id: "heart-no",
+    id: "heart-boundary",
     skill: "heart",
-    title: "Boundary yes",
+    title: "Boundary respect",
     prompt:
-      "A fan asks you to review their seed phrase “to recover funds.” Correct boundary?",
+      "A tribute keeps DMing at 3 a.m. with deep personal trauma. You have already given an hour. Best move?",
     kind: "single",
-    difficulty: 1,
-    weight: 1.25,
-    options: [
-      { id: "a", label: "Take the phrase and “help” offline" },
-      {
-        id: "b",
-        label:
-          "Hard no — never share seeds with anyone; point to official recovery docs and scam education",
-      },
-      { id: "c", label: "Ask them to post the phrase in public chat" },
-      { id: "d", label: "Charge $DDD to “secure” their phrase" },
-    ],
-    correct: "b",
-    explain: "Compassion includes refusing dangerous asks cleanly.",
-  },
-  {
-    id: "heart-feedback",
-    skill: "heart",
-    title: "Hard feedback",
-    prompt: "A tribute’s art is slop. You mentor. Best frame?",
-    kind: "single",
-    difficulty: 2,
     weight: 1.15,
     options: [
-      { id: "a", label: "Public roast thread with memes of their worst frame" },
+      { id: "a", label: "Keep going — they might be a future whale" },
       {
         id: "b",
-        label:
-          "Private, specific, kind: name what fails (hands/glyphs), show a bar reference, offer one clear next step",
+        label: "Kindly set a boundary, point to professional resources, offer to continue in daylight hours",
       },
-      { id: "c", label: "Ghost them forever" },
-      { id: "d", label: "Lie that it’s mint-ready to avoid feelings" },
+      { id: "c", label: "Ghost them" },
+      { id: "d", label: "Screenshot and post for engagement" },
     ],
     correct: "b",
-    explain: "Truth + dignity + path. Factory standards without cruelty.",
+    explain: "Care without self-erasure. Boundaries protect everyone.",
   },
   {
-    id: "heart-live",
-    skill: "heart",
-    title: "Live show energy",
-    prompt:
-      "During ICEFAM.FM EP.2 live, chat is spicy. Host-adjacent tribute should:",
-    kind: "single",
-    difficulty: 2,
-    options: [
-      { id: "a", label: "Brigade dissenters and invent CA “leaks” for hype" },
-      {
-        id: "b",
-        label:
-          "Amplify the broadcast link, keep claims honest, model chill curiosity, redirect scams to official channels",
-      },
-      { id: "c", label: "Spam rival tokens in every reply" },
-      { id: "d", label: "Demand seeds for “VIP seats”" },
-    ],
-    correct: "b",
-    explain: "Live culture = signal, honesty, no predation. Broadcast is the stage.",
-  },
-  {
-    id: "heart-apology",
+    id: "heart-fail",
     skill: "heart",
     title: "Own the miss",
-    prompt: "You shipped wrong copy that implied a live CA. Repair order?",
-    kind: "order",
-    difficulty: 2,
-    weight: 1.3,
-    options: [
-      { id: "ack", label: "Acknowledge the error publicly without spin" },
-      { id: "fix", label: "Fix the page / pin the correction" },
-      { id: "scope", label: "State what is true now (pre-mint / official sources only)" },
-      { id: "prevent", label: "Add checklist so it doesn’t recur" },
-    ],
-    correct: ["ack", "fix", "scope", "prevent"],
-    explain: "Own → fix → restate truth → harden process.",
-  },
-  {
-    id: "heart-inclusion",
-    skill: "heart",
-    title: "Who gets to play",
-    prompt: "Arena only works for desktop mouse users. Heart says:",
+    prompt:
+      "You shipped a bug that wiped a tribute’s local scores. Public reply?",
     kind: "single",
-    difficulty: 2,
+    weight: 1.1,
     options: [
-      { id: "a", label: "Mobile users should buy better phones" },
+      { id: "a", label: "Blame the browser cache and move on" },
       {
         id: "b",
-        label:
-          "Keyboard + touch targets + readable type — the factory includes more tributes by default",
+        label: "Own it publicly, explain the fix, offer to restore what we can, thank the reporter",
       },
-      { id: "c", label: "Hide the game behind a 4K-only gate" },
-      { id: "d", label: "Require webcam eye tracking to start" },
+      { id: "c", label: "Delete the issue thread" },
+      { id: "d", label: "Say it was intended behavior" },
     ],
     correct: "b",
-    explain: "Inclusion is product quality, not a charity add-on.",
+    explain: "Accountability builds trust. Deflection destroys it.",
   },
   {
-    id: "heart-hype",
+    id: "heart-welcome",
     skill: "heart",
-    title: "Hype without harm",
-    prompt: "Someone asks if $DDD “guarantees 100x.” Best reply?",
+    title: "First contact",
+    prompt:
+      "New tribute joins the arena and immediately asks “how do I win money?” Best opener?",
     kind: "single",
-    difficulty: 1,
-    weight: 1.2,
     options: [
-      { id: "a", label: "Yes, guaranteed — mortgage your house" },
+      { id: "a", label: "Drop the CA and a referral link" },
       {
         id: "b",
-        label:
-          "No guarantees. Skill arena + culture. Not financial advice. Pre-mint until official CA. Play for craft, not promises",
+        label: "Welcome them, explain the skill trials, clarify that $DDD is real but this is training — no promises",
       },
-      { id: "c", label: "Only if you send me SOL first" },
-      { id: "d", label: "Refuse to answer and mock them" },
+      { id: "c", label: "Ignore until they prove they hold a ticket" },
+      { id: "d", label: "Send them the whitepaper PDF" },
     ],
     correct: "b",
-    explain: "Honesty protects people. Hype without floor is predation.",
-  },
-  {
-    id: "heart-moderation",
-    skill: "heart",
-    title: "Moderation compass",
-    prompt: "A joke crosses into targeted harassment of a junior tribute. You mod. First move?",
-    kind: "single",
-    difficulty: 3,
-    weight: 1.25,
-    options: [
-      { id: "a", label: "Reply-all with worse jokes" },
-      {
-        id: "b",
-        label:
-          "Stop the harm (timeout/delete), support the target privately, document, apply rules evenly",
-      },
-      { id: "c", label: "Ban the target for “causing drama”" },
-      { id: "d", label: "Do nothing so “free speech vibes”" },
-    ],
-    correct: "b",
-    explain: "Safety first, fairness second, spectacle never.",
-  },
-  {
-    id: "heart-async",
-    skill: "heart",
-    title: "Async grace",
-    prompt: "Teammate in another TZ misses a “urgent” thread. Empathetic default?",
-    kind: "single",
-    difficulty: 2,
-    options: [
-      { id: "a", label: "Public shame for “not grinding”" },
-      {
-        id: "b",
-        label:
-          "Assume good intent, summarize decision + ask, keep async-friendly notes, escalate only if blocking",
-      },
-      { id: "c", label: "Fire them in a group voice call" },
-      { id: "d", label: "Change all deadlines to their 3am without saying so" },
-    ],
-    correct: "b",
-    explain: "Global teams need grace and clear writeups.",
-  },
-  {
-    id: "heart-spectator",
-    skill: "heart",
-    title: "Spectator dignity",
-    prompt: "Someone finishes MELT rank on the arena. Public results chat should:",
-    kind: "single",
-    difficulty: 2,
-    options: [
-      { id: "a", label: "Dogpile with “ngmi” spam" },
-      {
-        id: "b",
-        label:
-          "Encourage a re-run, point at weak skill from debrief, keep dignity — melt is data, not identity",
-      },
-      { id: "c", label: "Ban them from retrying" },
-      { id: "d", label: "Demand payment to erase the local board" },
-    ],
-    correct: "b",
-    explain: "The arena trains. Shame is not a curriculum.",
+    explain: "Honest framing first. Money talk comes after they understand the game.",
   },
 ];
 
@@ -872,58 +473,6 @@ export const PASS_MARKS = {
   allSkills: 0.65,
 };
 
-/** Default trials per skill in a single run (difficulty curve applied) */
-export const RUN_PER_SKILL = 5;
-
 export function challengesBySkill(skill) {
   return CHALLENGES.filter((c) => c.skill === skill);
-}
-
-/**
- * Build a difficulty-curved subset: per skill, prefer easy→mid→hard mix.
- * @param {Challenge[]} pool
- * @param {number} perSkill
- */
-export function pickRunChallenges(pool = CHALLENGES, perSkill = RUN_PER_SKILL) {
-  const skills = ["code", "canvas", "heart"];
-  const out = [];
-  for (const skill of skills) {
-    const bucket = pool.filter((c) => c.skill === skill);
-    const byDiff = { 1: [], 2: [], 3: [] };
-    for (const c of bucket) {
-      const d = c.difficulty === 3 ? 3 : c.difficulty === 2 ? 2 : 1;
-      byDiff[d].push(c);
-    }
-    for (const d of [1, 2, 3]) shuffleInPlace(byDiff[d]);
-
-    // Curve: roughly 40% easy, 40% mid, 20% hard (for perSkill=5 → 2,2,1)
-    const n1 = Math.max(1, Math.round(perSkill * 0.4));
-    const n3 = Math.max(1, Math.round(perSkill * 0.2));
-    const n2 = Math.max(0, perSkill - n1 - n3);
-    const targets = [
-      ...take(byDiff[1], n1),
-      ...take(byDiff[2], n2),
-      ...take(byDiff[3], n3),
-    ];
-    // Fill shortfall from remaining in skill
-    const used = new Set(targets.map((c) => c.id));
-    const rest = shuffleInPlace(bucket.filter((c) => !used.has(c.id)));
-    while (targets.length < perSkill && rest.length) targets.push(rest.shift());
-    // Soft order within skill: easy → hard for the run curve feel
-    targets.sort((a, b) => (a.difficulty || 1) - (b.difficulty || 1));
-    out.push(...targets);
-  }
-  return out;
-}
-
-function take(arr, n) {
-  return arr.slice(0, Math.min(n, arr.length));
-}
-
-function shuffleInPlace(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
 }

@@ -217,6 +217,210 @@ body.ddd-games .ddd-shell {
   color: var(--gold-hi);
 }
 
+/* Live broadcast band (ICEFAM.FM EP.2 / X) */
+.live-band {
+  display: grid;
+  gap: 18px;
+  margin: 0 0 22px;
+  padding: 18px 18px 20px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(240, 215, 140, 0.28);
+  background:
+    linear-gradient(135deg, rgba(140, 82, 255, 0.08), transparent 45%),
+    linear-gradient(225deg, rgba(255, 145, 77, 0.07), transparent 50%),
+    var(--panel-2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 640px) {
+  .live-band {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: stretch;
+  }
+}
+
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-hi);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff4d4d;
+  box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.55);
+  animation: live-pulse 1.6s ease-out infinite;
+}
+
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 77, 77, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+  }
+}
+
+.live-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 3.5vw, 1.55rem);
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.live-lede {
+  margin: 0 0 14px;
+  font-size: 0.92rem;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.live-lede a {
+  color: var(--mint);
+}
+
+.live-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+}
+
+.live-embed {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-width: 0;
+}
+
+.broadcast-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(240, 215, 140, 0.3);
+  background: rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+  color: var(--text);
+  min-height: 88px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.broadcast-card:hover,
+.broadcast-card:focus-visible {
+  border-color: var(--gold-hi);
+  background: rgba(201, 162, 39, 0.1);
+  outline: none;
+}
+
+.broadcast-card-kicker {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: var(--gold-hi);
+}
+
+.broadcast-card-title {
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.broadcast-card-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.twitter-tweet {
+  margin: 0 !important;
+}
+
+.bank-meta {
+  margin: 0 0 16px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.bank-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold-hi);
+  background: rgba(201, 162, 39, 0.12);
+  border: 1px solid rgba(240, 215, 140, 0.28);
+}
+
+.progress-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.tribute-chip {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.play-panel[data-skill="code"] {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(157, 204, 255, 0.12);
+}
+.play-panel[data-skill="canvas"] {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(240, 215, 140, 0.14);
+}
+.play-panel[data-skill="heart"] {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 158, 207, 0.12);
+}
+
+.meter-fill {
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.result-fine {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.panel.title-panel.epic {
+  animation: panel-in 0.45s ease-out both;
+}
+
+.panel.play-panel {
+  animation: panel-in 0.28s ease-out both;
+}
+
+.panel.result-panel.epic {
+  animation: panel-in 0.4s ease-out both;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .panel {
   background: linear-gradient(165deg, rgba(255, 255, 255, 0.03), transparent 40%), var(--panel);
   border: 1px solid var(--line);
@@ -673,7 +877,34 @@ body.ddd-games .ddd-shell {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .progress-bar {
+  .progress-bar,
+  .meter-fill {
     transition: none;
+  }
+
+  .live-dot {
+    animation: none;
+  }
+
+  .panel.title-panel.epic,
+  .panel.play-panel,
+  .panel.result-panel.epic {
+    animation: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .ddd-shell {
+    width: min(720px, calc(100% - 20px));
+    padding-top: 16px;
+  }
+
+  .live-actions .btn,
+  .result-actions .btn {
+    width: 100%;
+  }
+
+  .option {
+    min-height: 48px;
   }
 }

@@ -8,7 +8,13 @@
  * $DDD Games — state machine
  */
 
-import { CHALLENGES, PASS_MARKS, SKILLS } from "./challenges.js";
+import {
+  CHALLENGES,
+  PASS_MARKS,
+  RUN_PER_SKILL,
+  SKILLS,
+  pickRunChallenges,
+} from "./challenges.js";
 import { emptyAnswers, scoreRun, verdict } from "./scoring.js";
 
 const STORAGE_KEY = "ddd-games-v1";
@@ -16,9 +22,17 @@ const STORAGE_KEY = "ddd-games-v1";
 export function createGame(options = {}) {
   const pool = options.challenges || CHALLENGES;
   const marks = options.marks || PASS_MARKS;
+  const perSkill = options.perSkill ?? RUN_PER_SKILL;
+  /** when true, play entire pool (tests); default uses difficulty curve subset */
+  const fullBank = options.fullBank === true;
 
-  // Interleave skills for Hunger Games pacing: code, canvas, heart, repeat
-  const ordered = interleaveBySkill(pool);
+  function deal() {
+    const dealt = fullBank ? [...pool] : pickRunChallenges(pool, perSkill);
+    // Interleave skills for Hunger Games pacing: code, canvas, heart, repeat
+    return interleaveBySkill(dealt);
+  }
+
+  const ordered = deal();
 
   const state = {
     phase: "title", // title | playing | result
@@ -32,6 +46,7 @@ export function createGame(options = {}) {
     finishedAt: null,
     result: null,
     verdict: null,
+    bankSize: pool.length,
   };
 
   function current() {
@@ -53,6 +68,8 @@ export function createGame(options = {}) {
     state.tributeName = cleaned || "Anonymous Tribute";
     state.phase = "playing";
     state.index = 0;
+    // Fresh deal each run: shuffle + difficulty curve for replay value
+    state.challenges = deal();
     state.answers = emptyAnswers(state.challenges);
     state.orderDraft = [];
     state.startedAt = Date.now();
@@ -170,6 +187,7 @@ export function createGame(options = {}) {
       leaderboard: state.phase === "result" || state.phase === "title" ? leaderboard() : [],
       skills: SKILLS,
       marks,
+      bankSize: state.bankSize,
     };
   }
 

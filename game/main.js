@@ -10,11 +10,22 @@
 
 import { createGame } from "./engine.js";
 import { CHALLENGE_COUNT, RUN_PER_SKILL } from "./challenges.js";
+import {
+  isSoundOn,
+  toggleSound,
+  sfxSelect,
+  sfxAdvance,
+  sfxFinish,
+  sfxClear,
+} from "./sound.js";
 
 const LIVE_URL = "https://x.com/i/broadcasts/1kJzDDYeYWNKv";
+const DIFF_LABEL = { 1: "Easy", 2: "Mid", 3: "Hard" };
 
 const game = createGame();
 const root = document.getElementById("game-root");
+/** @type {string | null} */
+let lastPhase = null;
 
 if (!root) {
   console.error("$DDD Games: #game-root missing");
@@ -23,8 +34,12 @@ if (!root) {
 }
 
 function render(snap) {
+  const phaseChanged = lastPhase !== snap.phase;
+  lastPhase = snap.phase;
+
   root.innerHTML = "";
   root.dataset.phase = snap.phase;
+  root.appendChild(chromeBar());
 
   if (snap.phase === "title") {
     root.appendChild(viewTitle(snap));
@@ -34,26 +49,48 @@ function render(snap) {
     root.appendChild(viewResult(snap));
   }
 
-  // Focus management: land on the phase heading for SR / keyboard
-  requestAnimationFrame(() => {
-    const focusTarget =
-      root.querySelector("#game-title, #ch-title, #verdict-title") ||
-      root.querySelector("input, button, a");
-    if (focusTarget && typeof focusTarget.focus === "function") {
-      try {
-        focusTarget.focus({ preventScroll: true });
-      } catch {
-        focusTarget.focus();
+  // Focus only on phase change (not every option click)
+  if (phaseChanged) {
+    requestAnimationFrame(() => {
+      const focusTarget =
+        root.querySelector("#game-title, #ch-title, #verdict-title") ||
+        root.querySelector("input, button, a");
+      if (focusTarget && typeof focusTarget.focus === "function") {
+        try {
+          focusTarget.focus({ preventScroll: true });
+        } catch {
+          focusTarget.focus();
+        }
       }
-    }
+    });
+  }
+}
+
+function chromeBar() {
+  const on = isSoundOn();
+  const el = elFrom(`
+    <div class="game-chrome" role="toolbar" aria-label="Arena controls">
+      <button type="button" class="sound-toggle ${on ? "on" : "off"}" id="sound-toggle"
+        aria-pressed="${on ? "true" : "false"}"
+        title="${on ? "Mute arena sounds" : "Enable arena sounds"}">
+        <span class="sound-icon" aria-hidden="true">${on ? "♪" : "♩"}</span>
+        <span class="sound-label">${on ? "Sound on" : "Sound off"}</span>
+      </button>
+    </div>
+  `);
+  el.querySelector("#sound-toggle").addEventListener("click", () => {
+    toggleSound();
+    // re-render current phase chrome only via full render (cheap)
+    render(game.snapshot());
   });
+  return el;
 }
 
 function viewTitle(snap) {
   const bank = snap.bankSize || CHALLENGE_COUNT || "—";
-  const draw = RUN_PER_SKILL * 3;
+  const draw = (snap.perSkill || RUN_PER_SKILL) * 3;
   const el = elFrom(`
-    <section class="panel title-panel epic" aria-labelledby="game-title">
+    <section class="panel title-panel epic enter" aria-labelledby="game-title">
       <div class="ticket-frame" aria-hidden="true">
         <span class="ticket-notch"></span>
         <span class="ticket-foil">GOLDEN DROOL · $DDD</span>
@@ -89,6 +126,7 @@ function viewTitle(snap) {
   el.querySelector("#start-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
+    sfxAdvance();
     render(game.start(String(fd.get("name") || "")));
   });
   return el;
@@ -99,15 +137,18 @@ function viewPlaying(snap) {
   const p = snap.progress;
   const skill = ch.skillMeta;
   const pct = p.total ? Math.round((p.index / p.total) * 100) : 0;
+  const diff = ch.difficulty || 1;
+  const diffLabel = DIFF_LABEL[diff] || "Easy";
 
   const el = elFrom(`
-    <section class="panel play-panel" aria-labelledby="ch-title" data-skill="${escapeHtml(ch.skill)}">
+    <section class="panel play-panel enter" aria-labelledby="ch-title" data-skill="${escapeHtml(ch.skill)}" data-diff="${diff}">
       <header class="play-head">
-        <div class="progress-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="${p.total}" aria-valuenow="${p.index}" aria-label="Trial progress">
+        <div class="progress-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="${p.total}" aria-valuenow="${p.index}" aria-valuetext="${p.index} of ${p.total}" aria-label="Trial progress">
           <div class="progress-bar" style="width:${pct}%"></div>
         </div>
         <p class="meta">
           <span class="skill-badge skill-${ch.skill}">${escapeHtml(skill.name)}</span>
+          <span class="diff-badge diff-${diff}" title="Difficulty">${escapeHtml(diffLabel)}</span>
           <span class="progress-count">${p.index + 1} / ${p.total}</span>
           <span class="muted tribute-chip">${escapeHtml(snap.tributeName)}</span>
         </p>
@@ -130,8 +171,14 @@ function viewPlaying(snap) {
   if (ch.kind === "order") {
     const hint = document.createElement("p");
     hint.className = "order-hint";
+    hint.id = "order-hint";
     hint.textContent =
-      "Tap options in the correct order. Numbers show your sequence.";
+      "Tap options in the correct order. Numbers show your sequence. Keys 1–4 select.";
+    optionsRoot.appendChild(hint);
+  } else {
+    const hint = document.createElement("p");
+    hint.className = "order-hint";
+    hint.textContent = "Keys 1–4 select · Enter locks in when ready.";
     optionsRoot.appendChild(hint);
   }
 
@@ -159,6 +206,7 @@ function viewPlaying(snap) {
     }
 
     btn.addEventListener("click", () => {
+      sfxSelect();
       render(game.selectOption(opt.id));
     });
     optionsRoot.appendChild(btn);
@@ -167,15 +215,22 @@ function viewPlaying(snap) {
   const next = el.querySelector("#next-btn");
   next.addEventListener("click", () => {
     if (!game.snapshot().canAdvance) return;
-    render(game.advance());
+    const before = game.snapshot().phase;
+    const nextSnap = game.advance();
+    if (nextSnap.phase === "result") sfxFinish(nextSnap.verdict?.rank);
+    else sfxAdvance();
+    render(nextSnap);
+    void before;
   });
 
   const clear = el.querySelector("#clear-order");
   if (clear) {
-    clear.addEventListener("click", () => render(game.clearOrder()));
+    clear.addEventListener("click", () => {
+      sfxClear();
+      render(game.clearOrder());
+    });
   }
 
-  // Keyboard: 1–4 select options; Enter advances when ready
   el.addEventListener("keydown", (e) => {
     const n = Number(e.key);
     if (n >= 1 && n <= 9) {
@@ -200,10 +255,10 @@ function viewResult(snap) {
   const v = snap.verdict;
   const r = snap.result;
   const skills = ["code", "canvas", "heart"];
-  const ms = snap.leaderboard?.[0]?.ms;
+  const elapsedMs = snap.runMs;
   const elapsed =
-    typeof ms === "number"
-      ? ""
+    typeof elapsedMs === "number"
+      ? formatDuration(elapsedMs)
       : "";
 
   const meters = skills
@@ -233,17 +288,25 @@ function viewResult(snap) {
     )
     .join("");
 
-  const shareText = encodeURIComponent(
-    `I scored ${r.overallPercent}% on $DDD Games (${v.rank}) — Code/Canvas/Heart. May the odds be ever in your flavor. ${LIVE_URL}`
-  );
+  const shareLine = `I scored ${r.overallPercent}% on $DDD Games (${v.rank}) — Code ${r.skillScores.code.percent}% · Canvas ${r.skillScores.canvas.percent}% · Heart ${r.skillScores.heart.percent}%. May the odds be ever in your flavor. Play: https://drooly.ai/games/ddd · Live: ${LIVE_URL}`;
+  const shareText = encodeURIComponent(shareLine);
 
   const el = elFrom(`
-    <section class="panel result-panel epic rank-${escapeHtml(v.rank.toLowerCase())}" aria-labelledby="verdict-title">
+    <section class="panel result-panel epic enter rank-${escapeHtml(v.rank.toLowerCase())}" aria-labelledby="verdict-title">
       <p class="tagline result-tag">May the odds be ever in your flavor.</p>
-      <p class="eyebrow">Trial complete · overall ${r.overallPercent}% · path to livestream showdown</p>
+      <p class="eyebrow">Trial complete · overall ${r.overallPercent}%${elapsed ? ` · ${elapsed}` : ""} · path to livestream showdown</p>
       <h2 id="verdict-title" class="verdict-title" tabindex="-1">${escapeHtml(v.title)}</h2>
       <p class="rank-pill">${escapeHtml(v.rank)}</p>
       <p class="lede">${escapeHtml(v.blurb)}</p>
+
+      <div class="share-card" id="share-card" aria-label="Shareable result card">
+        <p class="share-card-kicker">$DDD GAMES · SEASON 0</p>
+        <p class="share-card-name">${escapeHtml(snap.tributeName)}</p>
+        <p class="share-card-score"><span class="share-big">${r.overallPercent}%</span> <span class="share-rank">${escapeHtml(v.rank)}</span></p>
+        <p class="share-card-skills">Code ${r.skillScores.code.percent}% · Canvas ${r.skillScores.canvas.percent}% · Heart ${r.skillScores.heart.percent}%</p>
+        <p class="share-card-tag">May the odds be ever in your flavor.</p>
+      </div>
+
       <div class="prize-box compact">
         <p class="prize-label">What you’re fighting for</p>
         <p class="prize-main">One of <strong>10 Golden Drool Tickets</strong> to the <strong>livestreamed showdown</strong> — plus a shot at Drooly Inc / drooly.ai when you prove Code · Canvas · Heart.</p>
@@ -254,19 +317,45 @@ function viewResult(snap) {
       ${boardHtml(snap.leaderboard)}
       <div class="result-actions">
         <button type="button" class="btn primary" id="retry">Run it back</button>
+        <button type="button" class="btn ghost" id="copy-share">Copy result</button>
         <a class="btn ghost" href="https://x.com/intent/tweet?text=${shareText}" target="_blank" rel="noopener noreferrer">Share on X</a>
         <a class="btn ghost" href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">Watch live ↗</a>
         <a class="btn ghost" href="/#golden-drool">Golden Drool</a>
         <a class="btn ghost" href="/chat">drooly.ai chat</a>
       </div>
-      <p class="fine result-fine">${elapsed}Sealed bank · local board only · dual-license OSS on droolygames/ddd-games</p>
+      <p class="fine result-fine" id="copy-status" aria-live="polite">Sealed bank · local board only · dual-license OSS on droolygames/ddd-games · sound optional</p>
     </section>
   `);
 
   el.querySelector("#retry").addEventListener("click", () => {
+    sfxAdvance();
     render(game.start(snap.tributeName));
   });
+
+  el.querySelector("#copy-share").addEventListener("click", async () => {
+    const status = el.querySelector("#copy-status");
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareLine);
+      } else {
+        throw new Error("no clipboard");
+      }
+      if (status) status.textContent = "Result copied — paste anywhere. Sound optional · local board only.";
+      sfxSelect();
+    } catch {
+      if (status) status.textContent = "Copy failed — use Share on X instead.";
+    }
+  });
+
   return el;
+}
+
+function formatDuration(ms) {
+  const s = Math.round(ms / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}m ${r}s`;
 }
 
 function boardHtml(board) {

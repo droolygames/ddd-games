@@ -33,11 +33,17 @@ Or open `game/index.html` via a local static server (ES modules need HTTP).
 ## Layout
 
 ```
-game/           # playable client (engine, challenges, UI)
+game/           # playable client (engine, challenges, UI, rules.html)
 assets/         # concept / brand stills (where present)
-docs/           # design notes
+docs/           # Season 0 rules + design notes
 LICENSE         # dual license (Section A + B)
 ```
+
+## Season 0 rules
+
+- Human page: [`game/rules.html`](./game/rules.html) (also linked from the arena UI)
+- Markdown: [`docs/season-0-rules.md`](./docs/season-0-rules.md)
+- Live show: [X broadcast](https://x.com/i/broadcasts/1kJzDDYeYWNKv)
 
 ## Product notes
 

@@ -20,6 +20,9 @@ import {
 } from "./sound.js";
 
 const LIVE_URL = "https://x.com/i/broadcasts/1kJzDDYeYWNKv";
+const OSS_URL = "https://github.com/droolygames/ddd-games";
+/** Resolve beside this module so cleanUrls (/games/ddd vs /games/ddd/) stay correct */
+const RULES_URL = new URL("rules.html", import.meta.url).pathname;
 const DIFF_LABEL = { 1: "Easy", 2: "Mid", 3: "Hard" };
 
 const game = createGame();
@@ -119,7 +122,7 @@ function viewTitle(snap) {
         <button type="submit" class="btn primary epic-cta">Enter the factory</button>
       </form>
       ${boardHtml(snap.leaderboard)}
-      <p class="nav-back"><a href="/#golden-drool">← Golden Drool on drooly.ai</a> · <a href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">Live broadcast ↗</a></p>
+      <p class="nav-back"><a href="${RULES_URL}">Season 0 rules</a> · <a href="/#golden-drool">← Golden Drool on drooly.ai</a> · <a href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">Live broadcast ↗</a></p>
     </section>
   `);
 
@@ -319,9 +322,10 @@ function viewResult(snap) {
         <button type="button" class="btn primary" id="retry">Run it back</button>
         <button type="button" class="btn ghost" id="copy-share">Copy result</button>
         <a class="btn ghost" href="https://x.com/intent/tweet?text=${shareText}" target="_blank" rel="noopener noreferrer">Share on X</a>
+        <a class="btn ghost" href="${RULES_URL}">Season 0 rules</a>
         <a class="btn ghost" href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">Watch live ↗</a>
         <a class="btn ghost" href="/#golden-drool">Golden Drool</a>
-        <a class="btn ghost" href="/chat">drooly.ai chat</a>
+        <a class="btn ghost" href="${OSS_URL}" target="_blank" rel="noopener noreferrer">Source ↗</a>
       </div>
       <p class="fine result-fine" id="copy-status" aria-live="polite">Sealed bank · local board only · dual-license OSS on droolygames/ddd-games · sound optional</p>
     </section>

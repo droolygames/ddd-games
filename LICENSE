@@ -1,0 +1,177 @@
+$DDD GAMES / DROOLY'S DEGEN DROOLHOUSE — SOURCE-AVAILABLE DUAL LICENSE
+Copyright (c) 2026 Alex Droolhouse / Drooly Inc. (formation planned).
+All rights reserved, except for the limited public grant in Section A.
+
+================================================================================
+IMPORTANT — THIS IS NOT AN OSI “OPEN SOURCE” LICENSE
+================================================================================
+
+True open-source licenses (MIT, Apache-2.0, GPL, AGPL, etc.) allow anyone —
+including commercial vendors and governments — to run, modify, and often sell
+the software free of charge.
+
+That is intentionally NOT the arrangement for $DDD Games.
+
+This repository is SOURCE-AVAILABLE under a STRICT dual license designed for:
+
+  • VALIDATION & TRANSPARENCY — anyone can read, audit, play locally, verify
+  • VALUE CAPTURE — commercial, SaaS, production, government use requires payment
+
+  (A) Limited Non-Commercial Evaluation, Play & Audit License  — free, narrow
+  (B) Commercial & Government Production License               — paid / written
+
+If you need rights broader than Section A, you must obtain Section B.
+There is no implied production or commercial license from GitHub visibility.
+
+“Open source” marketing claims for this repo mean SOURCE IS PUBLIC TO READ —
+not “free commercial production rights.”
+
+================================================================================
+SECTION A — LIMITED NON-COMMERCIAL EVALUATION, PLAY & AUDIT LICENSE
+================================================================================
+
+Subject to the conditions below, the copyright holder grants you a worldwide,
+royalty-free, non-exclusive, non-transferable, revocable license to:
+
+  1. Download, view, and study the source code and documentation;
+  2. Build and run the software for non-commercial personal play, local
+     development, education, academic research, and security research;
+  3. Run tests and reproduce published benchmarks;
+  4. Share UNMODIFIED copies of the source for non-commercial audit or
+     peer review, with attribution and this LICENSE attached;
+  5. Submit contributions under the contribution terms below;
+  6. Link to the official repository and official product sites
+     (drooly.ai, wetdrool.com only when designated by the copyright holder);
+
+…provided that ALL of the following conditions are met:
+
+  (a) ATTRIBUTION. Retain copyright notices and this LICENSE. Credit:
+      “$DDD Games / Drooly's Degen Droolhouse — © Alex Droolhouse / Drooly Inc.”
+      with a link to the official GitHub repository.
+
+  (b) NON-COMMERCIAL ONLY. You may not use the software (or substantial
+      portions) for commercial advantage or monetary compensation without
+      Section B. Prohibited without Section B (non-exhaustive):
+        • production SaaS / multi-tenant hosting of the game or derivatives;
+        • selling access, seats, tournaments-for-fee, or paid ranks;
+        • embedding in a paid product, marketplace listing, or app store
+          binary offered for a fee;
+        • commercial consulting deliverables that redistribute this code
+          as a core work product to paying clients;
+        • token, NFT, meme-coin, or investment products branded on this
+          codebase without a written Section B grant;
+        • ad-supported public hosting of a rebranded fork.
+
+  (c) NO PRODUCTION USE AT SCALE WITHOUT SECTION B.
+      “Production use” means operating the software to serve real end users
+      (other than yourself for personal non-commercial play), process real
+      customer data, run public tournaments for commercial gain, or run a
+      public network service. Personal single-user non-commercial play is
+      allowed under Section A.
+
+  (d) NO GOVERNMENT / PUBLIC-SECTOR PRODUCTION WITHOUT SECTION B.
+      Any government, military, intelligence community, public agency,
+      national lab, international organization, or contractor performing
+      for such an entity that deploys this software operationally requires
+      Section B. Reading and security research are not production use.
+
+  (e) NO PUBLIC COMPETING FORKS AS SUBSTITUTE PRODUCTS without Section B.
+      You may not publish a modified public distribution offered as a
+      drop-in replacement product, hosted game service, or rebranded stack
+      without Section B. Private forks for personal evaluation are allowed
+      under Section A.
+
+  (f) NO REMOVAL OF VALIDATION AFFORDANCES. You may not strip license
+      notices, copyright headers, or NOTICE files from redistributed copies.
+
+  (g) NO INVESTMENT SOLICITATION. Do not present this repository as a
+      securities offering, guaranteed-return product, or token sale vehicle.
+      Any on-chain tokens or NFTs related to $DDD are separate instruments
+      governed by their own disclosures; this LICENSE is for the software.
+
+  (h) NO ENDORSEMENT. Do not imply endorsement by the copyright holder.
+
+  (i) THIRD-PARTY COMPONENTS. Dependencies and fonts retain their own
+      licenses. Section A/B govern only first-party $DDD materials.
+
+  (j) TRADEMARKS. “$DDD”, “Drooly's Degen Droolhouse”, “TENDOOCHIE”,
+      “Drooly”, “Icefam”, and related marks are not licensed for product
+      branding without separate written permission. Copyright ≠ trademark.
+
+NO OTHER RIGHTS ARE GRANTED UNDER SECTION A. All rights not expressly
+granted are reserved.
+
+================================================================================
+SECTION B — COMMERCIAL & GOVERNMENT PRODUCTION LICENSE (PAID)
+================================================================================
+
+A separate written Commercial & Government Production License is REQUIRED for
+any use outside Section A, including without limitation:
+
+  • production deployment serving users or customers;
+  • commercial hosting, SaaS, tournament platforms, paid leaderboards;
+  • government / public-sector operational use;
+  • redistribution of modified versions as a product;
+  • OEM / white-label / embedded commercial distribution;
+  • commercial token/NFT/game-economy products built primarily on this code;
+  • any use for commercial advantage not covered by Section A.
+
+Section B licenses may include (negotiated):
+
+  • scope (indie studio, startup, enterprise, agency, worldwide SaaS);
+  • revenue share and/or annual fee;
+  • source escrow, updates, security-response SLAs;
+  • trademark and branding terms (separate from copyright);
+  • audit rights and compliance reporting;
+  • optional exclusivity (never default; premium only).
+
+HOW TO LICENSE
+
+  1. Open a GitHub issue titled: “Commercial / Government License Request”
+  2. Or contact the copyright holder via GitHub @AlexBTC420 / @kingofqueens6ix
+     and product surface https://drooly.ai
+
+  Include: legal entity name, use case, production scale, territory, duration,
+  whether modification/redistribution is required, and procurement constraints.
+
+Until a signed Section B agreement is in effect, Section A is your only grant.
+
+U.S. GOVERNMENT NOTE
+
+Publication on GitHub is not a public-domain dedication and is not a free
+license to the United States. Federal production use requires a negotiated
+Section B instrument consistent with applicable procurement law.
+
+================================================================================
+CONTRIBUTIONS (CLA)
+================================================================================
+
+By submitting a contribution (code, docs, tests, art, or other material) you
+agree that:
+
+  1. You grant the copyright holder a perpetual, worldwide, royalty-free,
+     irrevocable license to use, modify, sublicense, and relicense your
+     contribution under Section A, Section B, and any future dual-license
+     terms the copyright holder chooses (including proprietary).
+  2. You represent you have the right to make the contribution.
+  3. You waive moral rights to the extent permitted by law for the purpose
+     of dual licensing and commercial exploitation by the copyright holder.
+
+See CLA.md.
+
+================================================================================
+DISCLAIMER
+================================================================================
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY.
+
+Cryptocurrency, NFT, and game-economy features (if any) are experimental.
+Nothing here is investment, legal, or financial advice. Digital assets can
+go to zero.
+
+================================================================================
+END OF LICENSE
+================================================================================

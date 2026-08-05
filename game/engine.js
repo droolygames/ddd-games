@@ -175,9 +175,16 @@ export function createGame(options = {}) {
             title: ch.title,
             prompt: ch.prompt,
             kind: ch.kind,
+            difficulty: ch.difficulty || 1,
             options: ch.options || [],
           }
         : null,
+      runMs:
+        state.startedAt && state.finishedAt
+          ? state.finishedAt - state.startedAt
+          : state.startedAt
+            ? Date.now() - state.startedAt
+            : null,
       selected: ch ? state.answers[ch.id] : null,
       orderDraft: [...state.orderDraft],
       progress: progress(),

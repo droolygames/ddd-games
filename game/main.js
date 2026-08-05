@@ -67,7 +67,7 @@ function viewTitle(snap) {
         <p class="prize-sub"><strong>10 Golden Drool Tickets</strong> = livestreamed showdown seats. Train Code · Canvas · Heart. Watch: <a href="${LIVE_URL}" target="_blank" rel="noopener noreferrer">ICEFAM.FM EP.2 on X ↗</a></p>
       </div>
       <p class="lede">Train the three skills. Ticket holders are the <strong>Ten Tributes</strong>. Everyone else can spar in the arena.</p>
-      <p class="bank-meta" aria-label="Challenge bank size"><span class="bank-count">${bank}</span> sealed in bank · <strong>${draw}</strong> drawn per run (5 each skill) · reshuffle on retry · no eval</p>
+      <p class="bank-meta" aria-label="Challenge bank size"><span class="bank-count">${bank}</span> sealed in bank · <strong>${draw}</strong> drawn per run (5×3 · easy→hard curve) · reshuffle on retry · no eval</p>
       <ul class="skill-pills" role="list">
         <li class="pill code"><span>01</span> Code — Null Protocol</li>
         <li class="pill canvas"><span>02</span> Canvas — creativity</li>

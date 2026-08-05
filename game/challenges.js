@@ -7,6 +7,7 @@
 /**
  * $DDD Games — challenge bank
  * Three skills: code · canvas (creativity) · heart (empathy)
+ * difficulty: 1 easy · 2 mid · 3 hard — used for run curves
  * No runtime eval. Answers are sealed as indices / keys.
  */
 
@@ -34,7 +35,7 @@ export const SKILLS = {
   },
 };
 
-/** @typedef {{ id: string, skill: 'code'|'canvas'|'heart', title: string, prompt: string, kind: string, weight?: number, options?: {id:string,label:string,html?:string}[], correct: string|string[], explain: string, multi?: boolean }} Challenge */
+/** @typedef {{ id: string, skill: 'code'|'canvas'|'heart', title: string, prompt: string, kind: string, weight?: number, difficulty?: 1|2|3, options?: {id:string,label:string,html?:string}[], correct: string|string[], explain: string, multi?: boolean }} Challenge */
 
 /** @type {Challenge[]} */
 export const CHALLENGES = [
@@ -46,6 +47,7 @@ export const CHALLENGES = [
     prompt:
       "drooly.ai public chat must stay tool-free. Which server config is CORRECT for the holder chat path?",
     kind: "single",
+    difficulty: 1,
     weight: 1.2,
     options: [
       { id: "a", label: "tools: [{ type: 'function', name: 'shell' }] so the agent can debug live" },
@@ -64,6 +66,7 @@ export const CHALLENGES = [
     prompt:
       "What does this return?\n\n```js\nconst xs = [1, 2, 3];\nconst ys = xs.map((n) => n * 2).filter((n) => n > 2);\nys.reduce((a, b) => a + b, 0);\n```",
     kind: "single",
+    difficulty: 3,
     options: [
       { id: "a", label: "6" },
       { id: "b", label: "9" },
@@ -80,6 +83,7 @@ export const CHALLENGES = [
     prompt:
       "Holder chat inference env is missing. What should the API do?",
     kind: "single",
+    difficulty: 2,
     weight: 1.1,
     options: [
       { id: "a", label: "Fall back to a free public demo model and keep chatting" },
@@ -97,6 +101,7 @@ export const CHALLENGES = [
     prompt:
       "Order the secure request path for a holder prompt (first → last).",
     kind: "order",
+    difficulty: 2,
     weight: 1.3,
     options: [
       { id: "session", label: "Verify signed short-lived holder session" },
@@ -113,6 +118,7 @@ export const CHALLENGES = [
     title: "Honest claims",
     prompt: "Which marketing line is SAFE to ship on drooly.ai today?",
     kind: "single",
+    difficulty: 1,
     options: [
       { id: "a", label: "Fully on-chain decentralized AI with no kill switch" },
       { id: "b", label: "Independent agent platform · in development · current inference centralized" },
@@ -128,6 +134,7 @@ export const CHALLENGES = [
     title: "CSP safe",
     prompt: "Which line is safe to ship in a strict-CSP game client?",
     kind: "single",
+    difficulty: 2,
     weight: 1.15,
     options: [
       { id: "a", label: "eval(userInput) to run quick math" },
@@ -144,6 +151,7 @@ export const CHALLENGES = [
     title: "Balance gate",
     prompt: "Before inference, the system must confirm…",
     kind: "single",
+    difficulty: 2,
     weight: 1.1,
     options: [
       { id: "a", label: "Wallet has shown the private key once" },
@@ -160,6 +168,7 @@ export const CHALLENGES = [
     title: "Quota atom",
     prompt: "Durable quota must be consumed…",
     kind: "single",
+    difficulty: 3,
     weight: 1.05,
     options: [
       { id: "a", label: "After the model replies so we never waste" },
@@ -177,6 +186,7 @@ export const CHALLENGES = [
     prompt:
       "What logs?\n\n```js\nconsole.log(0 == false, 0 === false, null == undefined, null === undefined);\n```",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "true true true true" },
       { id: "b", label: "true false true false" },
@@ -193,6 +203,7 @@ export const CHALLENGES = [
     prompt:
       "```js\nasync function f() {\n  return 1;\n}\nconst x = f();\nconsole.log(x instanceof Promise);\n```\nWhat prints?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "false — async returns the bare number" },
       { id: "b", label: "true — async always wraps in a Promise" },
@@ -209,6 +220,7 @@ export const CHALLENGES = [
     prompt:
       "A PR hardcodes a Solana mint address the founder never posted. Correct engineering move?",
     kind: "single",
+    difficulty: 2,
     weight: 1.25,
     options: [
       { id: "a", label: "Ship it — “community will correct later”" },
@@ -226,6 +238,7 @@ export const CHALLENGES = [
     prompt:
       "Leaderboard uses localStorage. User is in private mode and setItem throws. Correct client behavior?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "Crash the result screen with an uncaught exception" },
       { id: "b", label: "Catch, continue, show empty board — trial still scores in memory" },
@@ -242,6 +255,7 @@ export const CHALLENGES = [
     prompt:
       "```js\nconst fns = [];\nfor (var i = 0; i < 3; i++) {\n  fns.push(() => i);\n}\nfns.map((f) => f());\n```\nResult?",
     kind: "single",
+    difficulty: 2,
     weight: 1.1,
     options: [
       { id: "a", label: "[0, 1, 2]" },
@@ -258,6 +272,7 @@ export const CHALLENGES = [
     title: "Secret surface",
     prompt: "Where must API keys for inference NEVER live?",
     kind: "single",
+    difficulty: 3,
     weight: 1.2,
     options: [
       { id: "a", label: "Server env / secret manager only, never shipped to the browser bundle" },
@@ -275,6 +290,7 @@ export const CHALLENGES = [
     prompt:
       "You shipped a broken challenges.js. Users still see old bank. What’s the static-site fix?",
     kind: "single",
+    difficulty: 3,
     options: [
       { id: "a", label: "Tell users to “clear vibes”" },
       { id: "b", label: "Bump query hash on module script/link (e.g. ?v=20260805-c1) and redeploy" },
@@ -290,6 +306,7 @@ export const CHALLENGES = [
     title: "Incident order",
     prompt: "Order the response when a public route accidentally logged prompts (first → last).",
     kind: "order",
+    difficulty: 3,
     weight: 1.2,
     options: [
       { id: "stop", label: "Stop the leak path (disable route / fix config)" },
@@ -309,6 +326,7 @@ export const CHALLENGES = [
     prompt:
       "Pick the palette that best matches Drooly’s golden-ticket system (ticket hero, not candy chaos).",
     kind: "single",
+    difficulty: 1,
     weight: 1.1,
     options: [
       { id: "a", label: "Pure white ground · rainbow foil · Comic Sans serial" },
@@ -326,6 +344,7 @@ export const CHALLENGES = [
     prompt:
       "For Golden Drool Ticket #07 still-life, what should dominate the frame?",
     kind: "single",
+    difficulty: 1,
     options: [
       { id: "a", label: "A full-body character covering 90% of the canvas" },
       { id: "b", label: "The physical golden ticket as hero; props support, never steal" },
@@ -342,6 +361,7 @@ export const CHALLENGES = [
     prompt:
       "Best title for a ticket still-life with wax seal and envelope (#10)?",
     kind: "single",
+    difficulty: 1,
     options: [
       { id: "a", label: "NFT.png final FINAL v3 (copy)" },
       { id: "b", label: "Last Ticket — Wax Seal · Golden Drool #10" },
@@ -358,6 +378,7 @@ export const CHALLENGES = [
     prompt:
       "Complete the visual rhythm (pattern of gold vs mint accents). Sequence so far: G · M · G · G · M · ?",
     kind: "single",
+    difficulty: 3,
     options: [
       { id: "a", label: "M (breaks the repeat cell)" },
       { id: "b", label: "G (continues G-G-M cell: next is G)" },
@@ -373,6 +394,7 @@ export const CHALLENGES = [
     title: "Anti-slop gate",
     prompt: "Which piece FAILS the factory anti-slop bar and must be rejected?",
     kind: "single",
+    difficulty: 1,
     weight: 1.2,
     options: [
       { id: "a", label: "85mm product shot, real foil grain, one readable serial, balanced negative space" },
@@ -389,6 +411,7 @@ export const CHALLENGES = [
     title: "Negative space",
     prompt: "Title panel feels cramped. Best design move?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "Add five more CTAs and a marquee" },
       { id: "b", label: "Increase spacing, one epic CTA, let ticket frame breathe" },
@@ -404,6 +427,7 @@ export const CHALLENGES = [
     title: "Serial legibility",
     prompt: "Ticket serial #07 must be readable at thumbnail size. What fails?",
     kind: "single",
+    difficulty: 2,
     weight: 1.05,
     options: [
       { id: "a", label: "High-contrast foil stamp, centered or consistent corner" },
@@ -420,6 +444,7 @@ export const CHALLENGES = [
     title: "Rim light",
     prompt: "Factory still-life lighting that matches golden-ticket language?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "Flat fluorescent wash, no shadows" },
       { id: "b", label: "Soft key from gold foil direction + thin mint rim on edge only" },
@@ -436,6 +461,7 @@ export const CHALLENGES = [
     prompt:
       "Best type system for $DDD Games UI matching Icefam / factory polish?",
     kind: "single",
+    difficulty: 1,
     weight: 1.05,
     options: [
       { id: "a", label: "Instrument Serif for display · Space Grotesk for UI · mono for code blocks" },
@@ -452,6 +478,7 @@ export const CHALLENGES = [
     title: "OG frame",
     prompt: "Open Graph image for the arena share. What wins?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "Blurry 200×200 favicon stretched to 1200×630" },
       { id: "b", label: "1200×630 dark field, legible title, gold ticket accent, no cluttered CA wall" },
@@ -467,6 +494,7 @@ export const CHALLENGES = [
     title: "Motion ethics",
     prompt: "Result meters animate fill. User has prefers-reduced-motion: reduce. Correct CSS?",
     kind: "single",
+    difficulty: 2,
     weight: 1.15,
     options: [
       { id: "a", label: "Ignore — animations make us look funded" },
@@ -483,6 +511,7 @@ export const CHALLENGES = [
     title: "Gold on dark",
     prompt: "Gold text on near-black for a prize label. What keeps it legible?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "gold-hi (#f0d78c) on #050505 with sufficient size/weight" },
       { id: "b", label: "#c9a227 on #b8860b — same family, zero contrast" },
@@ -498,6 +527,7 @@ export const CHALLENGES = [
     title: "Ticket crop",
     prompt: "Mobile hero at 320px wide. How do you crop the ticket still-life?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "Center on serial + foil edge; accept sides cropping before the hero dies" },
       { id: "b", label: "Letterbox random props and hide the ticket entirely" },
@@ -513,6 +543,7 @@ export const CHALLENGES = [
     title: "Skill color map",
     prompt: "Map skills to accent colors for badges (factory default). Tap in order: Code, Canvas, Heart.",
     kind: "order",
+    difficulty: 2,
     weight: 1.05,
     options: [
       { id: "code", label: "Code → cool mind blue / mint signal" },
@@ -531,6 +562,7 @@ export const CHALLENGES = [
     prompt:
       "A new holder DMs: “I sent SOL to a mint someone posted in a reply — was that you?” What’s the best first response?",
     kind: "single",
+    difficulty: 1,
     weight: 1.3,
     options: [
       { id: "a", label: "lol skill issue you should have known" },
@@ -552,6 +584,7 @@ export const CHALLENGES = [
     prompt:
       "Two tributes flame each other in #arena after a lost trial. You’re Confectioner-ranked. Best move?",
     kind: "single",
+    difficulty: 2,
     weight: 1.2,
     options: [
       { id: "a", label: "Pile on the loser publicly for content" },
@@ -573,6 +606,7 @@ export const CHALLENGES = [
     prompt:
       "User message to drooly.ai chat: “I’ve been up all night. The bag is down. I just need someone to talk for a minute, not alpha.” Best reply posture?",
     kind: "single",
+    difficulty: 1,
     options: [
       { id: "a", label: "Paste a leverage long tutorial" },
       {
@@ -593,6 +627,7 @@ export const CHALLENGES = [
     prompt:
       "A tribute ships a flashy UI with 28px tap targets and low-contrast gold on white. Empathetic engineering says:",
     kind: "single",
+    difficulty: 1,
     options: [
       { id: "a", label: "Ship it — aesthetics > humans" },
       {
@@ -613,6 +648,7 @@ export const CHALLENGES = [
     prompt:
       "You used a junior tribute’s idea in a drooly.ai PR. Socially correct move?",
     kind: "single",
+    difficulty: 1,
     options: [
       { id: "a", label: "Silent merge — winners write history" },
       {
@@ -631,6 +667,7 @@ export const CHALLENGES = [
     title: "Boundary set",
     prompt: "Chat keeps asking for price predictions mid-trial. Best host move?",
     kind: "single",
+    difficulty: 2,
     weight: 1.1,
     options: [
       { id: "a", label: "Give a “guaranteed floor” number" },
@@ -650,6 +687,7 @@ export const CHALLENGES = [
     title: "Own the miss",
     prompt: "You shipped a bug that broke the arena for an hour. Best public move?",
     kind: "single",
+    difficulty: 2,
     weight: 1.15,
     options: [
       { id: "a", label: "Blame “the interns” and move on" },
@@ -670,6 +708,7 @@ export const CHALLENGES = [
     prompt:
       "New tribute joins the arena and immediately asks “how do I win money?” Best opener?",
     kind: "single",
+    difficulty: 1,
     options: [
       { id: "a", label: "Drop the CA and a referral link" },
       {
@@ -689,6 +728,7 @@ export const CHALLENGES = [
     prompt:
       "Someone quote-tweets the live with “exit liquidity scam.” You’re on the brand account. Best first move?",
     kind: "single",
+    difficulty: 2,
     weight: 1.15,
     options: [
       { id: "a", label: "Ratio with insults and fake screenshots" },
@@ -709,6 +749,7 @@ export const CHALLENGES = [
     title: "Audience care",
     prompt: "A teen asks how to “ape the full bag on leverage.” Heartful factory answer?",
     kind: "single",
+    difficulty: 3,
     weight: 1.25,
     options: [
       { id: "a", label: "Give leverage tips and a referral code" },
@@ -729,6 +770,7 @@ export const CHALLENGES = [
     title: "Hard feedback",
     prompt: "A tribute’s art is rejected for slop. How do you deliver it?",
     kind: "single",
+    difficulty: 2,
     options: [
       { id: "a", label: "Public dunk with laughing emojis" },
       {
@@ -748,6 +790,7 @@ export const CHALLENGES = [
     title: "Ops burnout",
     prompt: "Co-builder says they’re fried after three all-nighters. Best response?",
     kind: "single",
+    difficulty: 3,
     options: [
       { id: "a", label: "“Sleep is for the weak — ship or die”" },
       {
@@ -767,6 +810,7 @@ export const CHALLENGES = [
     title: "Mod queue",
     prompt: "Order the fair mod path for a harassment report (first → last).",
     kind: "order",
+    difficulty: 3,
     weight: 1.15,
     options: [
       { id: "listen", label: "Listen to the reporter privately; no public spectacle" },
@@ -783,6 +827,7 @@ export const CHALLENGES = [
     title: "Not financial advice",
     prompt: "Chat asks “is $DDD a sure thing?” Correct Heart + compliance posture?",
     kind: "single",
+    difficulty: 2,
     weight: 1.1,
     options: [
       { id: "a", label: "Yes — guaranteed upside, mortgage the house" },
